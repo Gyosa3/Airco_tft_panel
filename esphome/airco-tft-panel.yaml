@@ -1,0 +1,56 @@
+esphome:
+  name: test-new-airco-panel
+  friendly_name: test new airco panel
+  libraries:
+    - SPI
+    - FS
+    - SPIFFS
+    - gyosa3/TFT_eSPI
+
+external_components:
+  - source:
+      type: local
+      path: custom_components
+    components: [ airco_tft_panel ]
+
+esp32:
+  board: nodemcu-32s
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+  # level: WARN
+   level: DEBUG
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "itS7Q8wpZlciA8/LfasD6WqaQNw1JUUsZ93qrS8UzpE="
+
+ota:
+  platform: esphome
+
+captive_portal:
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Esphome-Web-C7A87C"
+    password: "gIvZ7If0dzQH"
+
+sensor:
+  - platform: wifi_signal
+    id: tft_wifi_signal
+    name: "WiFi Signal Sensor"
+    update_interval: 60s
+    filters:
+      - lambda: return floor(min(max(2 * (x + 100.0), 0.0), 100.0));
+    unit_of_measurement: "%"
+    entity_category: "diagnostic"
+
+airco_tft_panel:
+  id: my_tft_panel
